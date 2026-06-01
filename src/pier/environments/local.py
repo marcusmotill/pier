@@ -32,11 +32,12 @@ class LocalEnvironment(BaseEnvironment):
         return EnvironmentCapabilities(
             gpus=False,
             disable_internet=True,
-            mounted=True,
+            mounted=False,
             preinstall_agents=False,
             filtered_egress=True,
             windows=False,
         )
+
 
     def _validate_definition(self):
         pass
