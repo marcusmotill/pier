@@ -863,11 +863,24 @@ mini-swe-agent --help
                     "Please set MSWEA_API_KEY environment variable as fallback"
                 )
 
-        # Pass through common API base configurations if present
         if self._get_env("OPENAI_API_BASE"):
             env["OPENAI_API_BASE"] = self._get_env("OPENAI_API_BASE") or ""
         if self._get_env("OPENAI_BASE_URL"):
             env["OPENAI_BASE_URL"] = self._get_env("OPENAI_BASE_URL") or ""
+
+        # Pass through GCP/Vertex AI environment variables if present
+        for key in (
+            "VERTEXAI_PROJECT",
+            "VERTEX_AI_PROJECT",
+            "VERTEXAI_LOCATION",
+            "VERTEX_AI_LOCATION",
+            "GOOGLE_CLOUD_PROJECT",
+            "GOOGLE_CLOUD_LOCATION",
+            "CLOUD_ML_REGION",
+        ):
+            if self._get_env(key):
+                env[key] = self._get_env(key) or ""
+
 
         cli_flags = self.build_cli_flags()
         extra_flags = (cli_flags + " ") if cli_flags else ""

@@ -45,6 +45,11 @@ _ENVIRONMENT_REGISTRY: dict[EnvironmentType, _EnvEntry] = {
         "DaytonaEnvironment",
         "daytona",
     ),
+    EnvironmentType.LOCAL: _EnvEntry(
+        "pier.environments.local",
+        "LocalEnvironment",
+        None,
+    ),
 }
 
 
