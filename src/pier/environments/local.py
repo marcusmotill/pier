@@ -37,7 +37,7 @@ class LocalEnvironment(BaseEnvironment):
         
         # Symlink /logs to the trial directory on the container filesystem
         logs_symlink = Path("/logs")
-        if logs_symlink.exists() or logs_symlink.is_link():
+        if logs_symlink.exists() or logs_symlink.is_symlink():
             try:
                 if logs_symlink.is_symlink():
                     logs_symlink.unlink()
