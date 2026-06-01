@@ -18,13 +18,22 @@ class LocalEnvironment(BaseEnvironment):
     def type() -> str:
         return "local"
 
+    def __init__(self, *args, **kwargs):
+        # LocalEnvironment runs inside a pre-isolated container and does not support
+        # pre-installing agents at container boot time.
+        # By setting agent_install_spec to None, we bypass pre-installation validation
+        # and force the agent to dynamically install itself inside the container during setup().
+        if "agent_install_spec" in kwargs:
+            kwargs["agent_install_spec"] = None
+        super().__init__(*args, **kwargs)
+
     @property
     def capabilities(self) -> EnvironmentCapabilities:
         return EnvironmentCapabilities(
             gpus=False,
             disable_internet=True,
             mounted=True,
-            preinstall_agents=True,
+            preinstall_agents=False,
             filtered_egress=True,
             windows=False,
         )
