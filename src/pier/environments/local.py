@@ -47,8 +47,9 @@ class LocalEnvironment(BaseEnvironment):
                 self.logger.warning(f"Could not clean up stale /logs path: {e}")
         
         try:
-            os.symlink(self.trial_paths.trial_dir, logs_symlink)
-            self.logger.info(f"Created symlink from /logs to {self.trial_paths.trial_dir}")
+            absolute_trial_dir = self.trial_paths.trial_dir.resolve()
+            os.symlink(absolute_trial_dir, logs_symlink)
+            self.logger.info(f"Created absolute symlink from /logs to {absolute_trial_dir}")
         except Exception as e:
             self.logger.error(f"Failed to create symlink for /logs: {e}")
             # Fallback: create the directories directly inside container root
