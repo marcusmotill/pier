@@ -34,6 +34,27 @@ class LocalEnvironment(BaseEnvironment):
 
     async def start(self, force_build: bool) -> None:
         self.trial_paths.mkdir()
+        
+        # Symlink /logs to the trial directory on the container filesystem
+        logs_symlink = Path("/logs")
+        if logs_symlink.exists() or logs_symlink.is_link():
+            try:
+                if logs_symlink.is_symlink():
+                    logs_symlink.unlink()
+                else:
+                    shutil.rmtree(logs_symlink)
+            except Exception as e:
+                self.logger.warning(f"Could not clean up stale /logs path: {e}")
+        
+        try:
+            os.symlink(self.trial_paths.trial_dir, logs_symlink)
+            self.logger.info(f"Created symlink from /logs to {self.trial_paths.trial_dir}")
+        except Exception as e:
+            self.logger.error(f"Failed to create symlink for /logs: {e}")
+            # Fallback: create the directories directly inside container root
+            os.makedirs("/logs/agent", exist_ok=True)
+            os.makedirs("/logs/verifier", exist_ok=True)
+            os.makedirs("/logs/artifacts", exist_ok=True)
 
     async def stop(self, delete: bool):
         pass
