@@ -22,7 +22,7 @@ class LocalEnvironment(BaseEnvironment):
     def capabilities(self) -> EnvironmentCapabilities:
         return EnvironmentCapabilities(
             gpus=False,
-            disable_internet=False,
+            disable_internet=True,
             mounted=True,
             preinstall_agents=True,
             filtered_egress=True,
