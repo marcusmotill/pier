@@ -646,7 +646,7 @@ curl -LsSf https://astral.sh/uv/0.7.13/install.sh | sh
 if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.bashrc" 2>/dev/null; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
 fi
-source "$HOME/.local/bin/env"
+. "$HOME/.local/bin/env"
 uv tool install mini-swe-agent{version_spec}
 
 python_bin="$(head -n 1 "$(command -v mini-swe-agent)" | sed 's/^#!//')"
