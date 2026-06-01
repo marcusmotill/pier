@@ -73,8 +73,8 @@ class LocalEnvironment(BaseEnvironment):
         command: str,
         cwd: str | None = None,
         env: dict[str, str] | None = None,
+        timeout_sec: int | None = None,
         user: str | int | None = None,
-        read_timeout_sec: float | None = None,
     ) -> ExecResult:
         merged_env = self._merge_env(env) or {}
         full_env = {**os.environ, **merged_env}
@@ -92,10 +92,10 @@ class LocalEnvironment(BaseEnvironment):
                 env=full_env,
             )
 
-            if read_timeout_sec:
+            if timeout_sec:
                 try:
                     stdout, stderr = await asyncio.wait_for(
-                        proc.communicate(), timeout=read_timeout_sec
+                        proc.communicate(), timeout=timeout_sec
                     )
                 except asyncio.TimeoutError:
                     proc.kill()
