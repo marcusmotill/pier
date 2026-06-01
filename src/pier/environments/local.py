@@ -35,27 +35,13 @@ class LocalEnvironment(BaseEnvironment):
     async def start(self, force_build: bool) -> None:
         self.trial_paths.mkdir()
         
-        # Symlink /logs to the trial directory on the container filesystem
-        logs_symlink = Path("/logs")
-        if logs_symlink.exists() or logs_symlink.is_symlink():
-            try:
-                if logs_symlink.is_symlink():
-                    logs_symlink.unlink()
-                else:
-                    shutil.rmtree(logs_symlink)
-            except Exception as e:
-                self.logger.warning(f"Could not clean up stale /logs path: {e}")
-        
-        try:
-            absolute_trial_dir = self.trial_paths.trial_dir.resolve()
-            os.symlink(absolute_trial_dir, logs_symlink)
-            self.logger.info(f"Created absolute symlink from /logs to {absolute_trial_dir}")
-        except Exception as e:
-            self.logger.error(f"Failed to create symlink for /logs: {e}")
-            # Fallback: create the directories directly inside container root
-            os.makedirs("/logs/agent", exist_ok=True)
-            os.makedirs("/logs/verifier", exist_ok=True)
-            os.makedirs("/logs/artifacts", exist_ok=True)
+        # Create normal local directories on the container root filesystem.
+        # These are fully local, avoiding any GCS FUSE symlink or permission restrictions.
+        # The Pier framework will automatically copy logs back to trial_paths via download_dir/download_file!
+        os.makedirs("/logs/agent", exist_ok=True)
+        os.makedirs("/logs/verifier", exist_ok=True)
+        os.makedirs("/logs/artifacts", exist_ok=True)
+        self.logger.info("Created local /logs directories on container root filesystem")
 
     async def stop(self, delete: bool):
         pass
