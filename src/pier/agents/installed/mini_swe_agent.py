@@ -617,7 +617,9 @@ class MiniSweAgent(BaseInstalledAgent):
         packages = list(self._extra_python_packages)
         if self.model_name and self.model_name.startswith("vertex_ai/"):
             packages.append("google-auth")
+            packages.append("google-cloud-aiplatform")
         return list(dict.fromkeys(packages))
+
 
     def install_spec(self) -> AgentInstallSpec:
         version_spec = f"=={self._version}" if self._version else ""
